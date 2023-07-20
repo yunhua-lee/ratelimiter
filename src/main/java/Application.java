@@ -54,8 +54,10 @@ public class Application {
 		}
 
 		Limiter limiter = null;
-		if( limiterType.equalsIgnoreCase("fw")) {
+		if( limiterType.equalsIgnoreCase("fw") ) {
 			limiter = new FixedTimeWindow(limiterInterval, limiterCount);
+		} else if(limiterType.equalsIgnoreCase("sfw") ){
+			limiter = new SimpleFixedTimeWindow(limiterInterval, limiterCount);
 		} else if( limiterType.equalsIgnoreCase("sw")){
 			limiter = new SlideTimeWindow(limiterInterval, limiterCount);
 		} else if( limiterType.equalsIgnoreCase("tb")){
@@ -90,8 +92,8 @@ public class Application {
 		final Option requestCount = new Option("C", true, "request count");
 		options.addOption(requestCount);
 
-		final Option limiterType = new Option("t", true, "limiter type, fw = fixed time window," +
-				"sw = slide time window, tb = token bucket");
+		final Option limiterType = new Option("t", true, "limiter type, fw = fixed time window" +
+				", sfw = simple fixed time window, sw = slide time window, tb = token bucket");
 		options.addOption(limiterType);
 
 		final Option threadCount = new Option("T", true, "thread count, default 3");
