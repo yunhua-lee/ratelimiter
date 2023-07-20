@@ -11,26 +11,26 @@ import redis.clients.jedis.JedisPoolConfig;
 abstract public class AbstractLimiter implements Limiter{
 
 	private final Integer interval;
-	private final Integer count;
+	private final Integer limitCount;
 
-	protected final JedisPool pool;
+	protected final JedisPool jedisPool;
 
 	public AbstractLimiter(Integer interval, Integer count){
 		this.interval = interval;
-		this. count = count;
+		this.limitCount = count;
 
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(10);
 		config.setBlockWhenExhausted(false);
 
-		pool = new JedisPool(config,"127.0.0.1",6379);
+		jedisPool = new JedisPool(config,"127.0.0.1",6379);
 	}
 
 	public Integer getInterval() {
 		return interval;
 	}
 
-	public Integer getCount() {
-		return count;
+	public Integer getLimitCount() {
+		return limitCount;
 	}
 }

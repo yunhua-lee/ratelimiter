@@ -8,13 +8,11 @@ import java.util.concurrent.*;
  * @Date 2023/7/19
  */
 public class Requester {
-	private final Integer interval;
 	private final Integer count;
 
 	private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
-	public Requester(Integer interval, Integer count){
-		this.interval = interval;
+	public Requester(Integer count){
 		this. count = count;
 	}
 
@@ -29,6 +27,6 @@ public class Requester {
 			}
 		};
 
-		pool.scheduleAtFixedRate(task, 1, interval, TimeUnit.SECONDS);
+		pool.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
 	}
 }

@@ -15,7 +15,7 @@ public class FixedTimeWindow extends AbstractLimiter{
 
 	@Override
 	public boolean check() {
-		Jedis client = pool.getResource();
+		Jedis client = jedisPool.getResource();
 
 		try{
 			String timeKey = getTimeKey();
@@ -25,14 +25,14 @@ public class FixedTimeWindow extends AbstractLimiter{
 			String timeKeyValue = client.get(timeKey);
 			currentCount = client.incr(countKey);
 
-			//switch time windows
+			//switch time window
 			if( timeKeyValue == null ) {
 				timeKeyValue = String.valueOf(currentCount);
 
 				//try to set new time key
 				SetParams params = new SetParams();
 
-				//important: time key expire time should be larger than interval.
+				//important: time key expire time should be larger than window interval.
 				//because the applications time may not be consistent with redis or
 				//each other.
 				params.ex( 2 * getInterval());
@@ -47,16 +47,17 @@ public class FixedTimeWindow extends AbstractLimiter{
 			}
 
 			long startCount = Long.parseLong(timeKeyValue);
-			long realCount = currentCount - startCount;
+			long realCount = currentCount - startCount + 1;
 
-			if (realCount > getCount()) {
-				System.out.println("rate limited, real count: " + realCount +
-						", limit count: " + getCount());
+			if (realCount > getLimitCount()) {
+				System.out.println("rate limited(fixed time window), real count: " + realCount +
+						", limit count: " + getLimitCount());
 				return false;
 			}
 
 			return true;
 		} finally {
+			//close client and it will be returned to pool
 			client.close();
 		}
 	}

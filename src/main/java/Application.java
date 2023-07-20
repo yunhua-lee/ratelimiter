@@ -28,12 +28,6 @@ public class Application {
 			return;
 		}
 
-		Integer requestInterval = Integer.valueOf(cmd.getOptionValue("I", "5"));
-		if( requestInterval < 1 ){
-			System.err.println("request interval(-I) should be larger than 0;");
-			return;
-		}
-
 		Integer limiterCount = Integer.valueOf(cmd.getOptionValue("c", "100"));
 		if( limiterCount < 1 ){
 			System.err.println("limiter count(-c) should be larger than 0;");
@@ -71,10 +65,11 @@ public class Application {
 			printHelp(options);
 			return;
 		}
+		limiter.start();
 
 		BlockingQueue<Long> queue = new ArrayBlockingQueue<>(1000);
 
-		Requester requester = new Requester(requestInterval, requestCount);
+		Requester requester = new Requester(requestCount);
 		requester.start(queue);
 
 		for(int i = 0; i < threadCount; i++){
@@ -88,9 +83,6 @@ public class Application {
 
 		final Option limiterInterval = new Option("i", true, "limiter interval(s)");
 		options.addOption(limiterInterval);
-
-		final Option requestInterval = new Option("I", true, "request interval(s)");
-		options.addOption(requestInterval);
 
 		final Option limiterCount = new Option("c", true, "limiter count");
 		options.addOption(limiterCount);
@@ -124,7 +116,7 @@ public class Application {
 
 	private static void printHelp(Options options){
 
-		System.out.println("Usage: java -jar ratelimiter.jar -i 10 -c 100 -i 5 - C 200 -t fw -T 3");
+		System.out.println("Usage: java -jar ratelimiter.jar -i 10 -c 100 -C 200 -t fw -T 3");
 
 		Collection<Option> optionList = options.getOptions();
 		for(Option o : optionList){

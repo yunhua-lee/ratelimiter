@@ -31,6 +31,8 @@ public class Processor {
 
 						if( limiter.check() ) {
 							processRequest(request);
+						} else {
+							rejectRequest(request);
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -43,6 +45,11 @@ public class Processor {
 	}
 
 	void processRequest(Long request){
+		//Just for extension
+		return;
+	}
+
+	void rejectRequest(Long request){
 		//Just for extension
 		return;
 	}
